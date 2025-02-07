@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Calculator</title>
+
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        /* Apply Roboto font to the entire page */
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding-left: 500px;
+            padding-top: 100px;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container mt-5 pl-3">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h1>Electricity Calculator</h1>
+            <p class="lead">Calculate electricity rates for each hour up to 24 hours!</p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="card border-0" 
+            style="width: 400px; height: 160px;border-radius: 15px; padding-left: 10px; background-color: #ffa726;">
+            <div class="card-body">
+            <h4 class="text-center text-white mb-4" style="padding-top: 10px;">Electricity Calculator</h4>
+                <form action="" method="POST">
+            <!-- Voltage Input -->
+            <div class="form-group mb-3">
+                <label for="voltage" class="text-white">Voltage (V):</label>
+                <input type="number" class="form-control rounded-pill" id="voltage" name="voltage" required>
+            </div>
+            
+            <!-- Current Input -->
+            <div class="form-group mb-3">
+                <label for="current" class="text-white">Current (A):</label>
+                <input type="number" class="form-control rounded-pill" id="current" name="current" step="0.01" required>
+            </div>
+            
+            <!-- Rate Input -->
+            <div class="form-group mb-3">
+                <label for="rate" class="text-white">Current Rate (sen/kWh):</label>
+                <input type="number" class="form-control rounded-pill" id="rate" name="rate" step="0.01" required>
+            </div>
+
+            <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary" 
+                style="border: 3px solid white; black: white; font-weight: bold; border-radius: 5px; padding: 5px 5px; ">Calculate</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Results Section -->
+        <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Retrieve Input Values
+        $voltage = $_POST['voltage'];
+        $current = $_POST['current'];
+        $rate = $_POST['rate'];
+
+        // Calculate Power
+        $power = ($voltage * $current) / 1000; // Power in kW
+        $newrate = $rate/ 100;
+
+        // Display Results
+        echo "
+        <div class='mt-4'>
+        <h4>Results:</h4>
+        <p><strong>Power:</strong> " . number_format($power, 5) . " kW</p>
+        <p><strong>Rate:</strong> " . number_format($newrate, 3) . " RM</p>
+        <table class='table table-bordered mt-3' style='border: 2px solid black;'>
+        <thead class='text-white' style='background-color: #ffa726; border: 2px solid black;'>
+            <tr>
+                <th style='border: 2px solid black;'>Hour</th>
+                <th style='border: 2px solid black;'>Energy (kWh)</th>
+                <th style='border: 2px solid black;'>Total Cost (RM)</th>
+            </tr>
+        </thead>
+        <tbody>";
+
+        // Loop through each hour (1 to 24) and calculate energy and cost
+            for ($hour = 1; $hour <= 24; $hour++) {
+            $energy = ($power * $hour); // Energy in kWh
+            $total = $energy * ($rate / 100); // Total cost in RM
+        echo "
+            <tr>
+                <td style='border: 2px solid black;'>{$hour}</td>
+                <td style='border: 2px solid black;'>" . number_format($energy, 5) . " </td>
+                <td style='border: 2px solid black;'>RM " . number_format($total, 2) . "</td>
+            </tr>";
+    }
+        echo "
+        </tbody>
+        </table>
+        </div>";
+    }
+    ?>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+        <p>&copy; 2025 Electricity Calculator | Bootstrap Example</p>
+    </footer>
+</body>
+</html>
